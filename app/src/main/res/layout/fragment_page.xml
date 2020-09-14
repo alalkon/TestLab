@@ -16,7 +16,8 @@
             android:layout_marginTop="200dp"
             android:background="@color/colorButton"
             android:text="GREETING"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:textColor="@color/textColor"/>
 
     </LinearLayout>
 

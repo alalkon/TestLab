@@ -18,7 +18,10 @@ class PageFragment : Fragment() {
             inflater,
             R.layout.fragment_page, container, false
         )
-
+        binding.greetingButton.setOnClickListener {view: View ->
+            var dialog = DialogFragment()
+            dialog.show(childFragmentManager, "dialogFragment")
+        }
         return binding.root
     }
 }
