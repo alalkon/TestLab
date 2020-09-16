@@ -4,7 +4,7 @@
     tools:context=".DialogFragment">
 
     <LinearLayout
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:background="@color/colorButton"
         android:orientation="vertical"
@@ -14,8 +14,8 @@
             android:id="@+id/dialogTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Hi, is it your name?"
+            android:layout_marginTop="10dp"
+            android:text="Hi, nice to meet you"
             android:textAlignment="center"
             android:textSize="26sp"
             android:textColor="@color/textColor"/>
@@ -23,8 +23,8 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text=""
+            android:layout_marginTop="10dp"
+            android:textColor="@color/textColor"
             android:textAlignment="center"
             android:textSize="26sp" />
 

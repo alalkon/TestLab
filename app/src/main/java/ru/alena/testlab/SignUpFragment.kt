@@ -6,17 +6,16 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import ru.alena.testlab.databinding.FragmentSignUpBinding
+import java.util.regex.Pattern
 
 class SignUpFragment : Fragment() {
 
     private lateinit var binding: FragmentSignUpBinding
-    private lateinit var viewModel: SignUpViewModel
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,15 +27,13 @@ class SignUpFragment : Fragment() {
             R.layout.fragment_sign_up, container, false
         )
 
-        viewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
-        
 
         binding.name.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (binding.name.text.isEmpty() || !viewModel.isNameSurnameValid(binding.name.text.toString())) {
+                if (binding.name.text.isEmpty() || !isNameSurnameValid(binding.name.text.toString())) {
                     binding.name.error = "Field shouldn't be blank. Exp: Ivan"
                 }
             }
@@ -47,7 +44,7 @@ class SignUpFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (binding.surname.text.isEmpty() || !viewModel.isNameSurnameValid(binding.surname.text.toString())) {
+                if (binding.surname.text.isEmpty() || !isNameSurnameValid(binding.surname.text.toString())) {
                     binding.surname.error = "Field shouldn't be blank. Exp: Ivanov"
                 }
             }
@@ -58,7 +55,7 @@ class SignUpFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (binding.birthday.text.isEmpty() || !viewModel.isDateValid(binding.birthday.text.toString())) {
+                if (binding.birthday.text.isEmpty() || !isDateValid(binding.birthday.text.toString())) {
                     binding.birthday.error = "Field shouldn't be blank DD.MM.YYYY"
                 }
             }
@@ -69,7 +66,7 @@ class SignUpFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (binding.emailSignUp.text.isEmpty() || !viewModel.isEmailValid(binding.emailSignUp.text.toString())) {
+                if (binding.emailSignUp.text.isEmpty() || !isEmailValid(binding.emailSignUp.text.toString())) {
                     binding.emailSignUp.error = "Field shouldn't be blank and asd12@asd.com"
                 }
             }
@@ -80,7 +77,7 @@ class SignUpFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (binding.passwordSignUp.text.isEmpty() || !viewModel.isPasswordValid(binding.passwordSignUp.text.toString())) {
+                if (binding.passwordSignUp.text.isEmpty() || !isPasswordValid(binding.passwordSignUp.text.toString())) {
                     binding.passwordSignUp.error = "Field shouldn't be blank and password"
                 }
             }
@@ -92,23 +89,63 @@ class SignUpFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (binding.passwordCheck.text.isEmpty() || binding.passwordCheck.text.toString()
-                    != binding.passwordSignUp.text.toString()) {
+                    != binding.passwordSignUp.text.toString()
+                ) {
                     binding.passwordCheck.error = "Passwords don't match"
                 }
             }
         })
 
         binding.goSignUpButton.setOnClickListener { view: View ->
-            if (viewModel.isNameSurnameValid(binding.name.text.toString())
-                && viewModel.isNameSurnameValid(binding.surname.text.toString())
-                && viewModel.isDateValid(binding.birthday.text.toString())
-                && viewModel.isEmailValid(binding.emailSignUp.text.toString())
-                && viewModel.isPasswordValid(binding.passwordSignUp.text.toString())
+            if (isNameSurnameValid(binding.name.text.toString())
+                && isNameSurnameValid(binding.surname.text.toString())
+                && isDateValid(binding.birthday.text.toString())
+                && isEmailValid(binding.emailSignUp.text.toString())
+                && isPasswordValid(binding.passwordSignUp.text.toString())
                 && binding.passwordCheck.text.toString() == binding.passwordSignUp.text.toString()
             ) {
                 view.findNavController().navigate(R.id.action_signUpFragment_to_pageFragment)
             }
         }
+        ////////////EXPERIMENTS/////////////////////////////////////////////////////////////
+        val userName = binding.name.text.toString()
+        view?.findNavController()?.navigate(R.id.action_signUpFragment_to_pageFragment,
+            bundleOf("name" to userName)
+        )
+
+        //////////////////////////////////////////////////////////////////////////////////
         return binding.root
+    }
+
+
+
+    fun isNameSurnameValid(name: String): Boolean {
+        val Name = Pattern.compile("[A-Z][a-zA-Z]" + "[^#&<>\\\"~;\$^%{}?]{1,20}" + "$")
+        return Name.matcher(name).matches()
+    }
+
+    fun isDateValid(date: String): Boolean {
+        val birthday =
+            Pattern.compile("^" + "(1[0-2]|0[1-9]).(3[01]|[12][0-9]|0[1-9]).[0-9]{4}" + "$")
+        return birthday.matcher(date).matches()
+    }
+
+    fun isEmailValid(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    fun isPasswordValid(password: String): Boolean {
+        val passwordPattern = Pattern.compile(
+            "^" +
+                    "(?=.*[0-9])" +         //at least 1 digit
+                    "(?=.*[a-z])" +         //at least 1 lower case letter
+                    "(?=.*[A-Z])" +         //at least 1 upper case letter
+                    "(?=.*[a-zA-Z])" +      //any letter
+                    "(?=.*[!.,<>@#$%^&+=])" +    //at least 1 special character
+                    "(?=\\S+$)" +           //no white spaces
+                    ".{6,}" +               //at least 8 characters
+                    "$"
+        )
+        return passwordPattern.matcher(password).matches()
     }
 }
