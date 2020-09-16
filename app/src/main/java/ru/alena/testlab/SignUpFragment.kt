@@ -104,16 +104,10 @@ class SignUpFragment : Fragment() {
                 && isPasswordValid(binding.passwordSignUp.text.toString())
                 && binding.passwordCheck.text.toString() == binding.passwordSignUp.text.toString()
             ) {
-                view.findNavController().navigate(R.id.action_signUpFragment_to_pageFragment)
+                view.findNavController().navigate(R.id.action_signUpFragment_to_pageFragment,
+                    bundleOf("name" to binding.name.text.toString()))
             }
         }
-        ////////////EXPERIMENTS/////////////////////////////////////////////////////////////
-        val userName = binding.name.text.toString()
-        view?.findNavController()?.navigate(R.id.action_signUpFragment_to_pageFragment,
-            bundleOf("name" to userName)
-        )
-
-        //////////////////////////////////////////////////////////////////////////////////
         return binding.root
     }
 
