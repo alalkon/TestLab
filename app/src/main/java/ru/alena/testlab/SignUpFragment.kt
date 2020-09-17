@@ -7,12 +7,12 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import ru.alena.testlab.databinding.FragmentSignUpBinding
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
@@ -53,17 +53,6 @@ class SignUpFragment : Fragment() {
             }
         })
 
-       binding.birthday.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (binding.birthday.text.isEmpty()) {
-                    binding.birthday.error = "Pick date"
-                }
-            }
-        })
-
         binding.emailSignUp.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -100,7 +89,7 @@ class SignUpFragment : Fragment() {
             }
         })
 
-        binding.goSignUpButton.setOnClickListener { view: View ->
+       binding.goSignUpButton.setOnClickListener { view: View ->
             if (isNameSurnameValid(binding.name.text.toString())
                 && isNameSurnameValid(binding.surname.text.toString())
                 && (binding.birthday.text.isNotEmpty())
@@ -110,7 +99,7 @@ class SignUpFragment : Fragment() {
             ) {
                 view.findNavController().navigate(R.id.action_signUpFragment_to_pageFragment,
                     bundleOf("name" to binding.name.text.toString()))
-            }
+            } else Toast.makeText(context, "Please fill all fields correct", Toast.LENGTH_LONG).show()
         }
 
         //DATE_PICKER
@@ -122,13 +111,11 @@ class SignUpFragment : Fragment() {
             cal.set(Calendar.MONTH, monthOfYear)
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-            val myFormat = "dd.MM.yyyy" // mention the format you need
-            val sdf = SimpleDateFormat(myFormat, Locale.US)
-            binding.birthday.text = sdf.format(cal.time)
+            binding.birthday.setText("$dayOfMonth.$monthOfYear.$year")
 
         }
 
-        binding.dateButton.setOnClickListener {
+        binding.birthday.setOnClickListener {
             DatePickerDialog(requireContext(), dateSetListener,
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
