@@ -144,7 +144,7 @@ class SignUpFragment : Fragment() {
                     "(?=.*[a-zA-Z])" +      //any letter
                     "(?=.*[!.,<>@#$%^&+=])" +    //at least 1 special character
                     "(?=\\S+$)" +           //no white spaces
-                    ".{6,}" +               //at least 6 characters
+                    ".{8,}" +               //at least 6 characters
                     "$"
         )
         return passwordPattern.matcher(password).matches()
